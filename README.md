@@ -6,7 +6,7 @@ This application efficiently translates large text files using Google Translate.
 
 ## Snapshot
 
-![Tool Screenshot](Snapshot.png)
+![Tool Screenshot](Snapshoth.png)
 
 ## Workflow Explanation
 
