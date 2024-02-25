@@ -7,14 +7,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 
 
-
 def translate(text, source, target):
     translator = GoogleTranslator() # YOU MUST CREATE ONE FOR EACH REQUEST OR THE MULTI-THREADING WILL FAIL, SINCE EACH INSTANCE HANDLE ONE REQUEST AT a TIME.
     translator.source = source
     translator.target = target
     return translator.translate(text)
 
-def translate_and_save(source_path, save_path, source_lang, target_lang, progress_var, num_workers):
+def translate_and_save(source_path, save_path, source_lang, target_lang, progress_var, max_chunk_length, num_workers):
     try:
         if not source_lang or not target_lang:
             raise ValueError("Please select both source and target languages")
@@ -22,11 +21,10 @@ def translate_and_save(source_path, save_path, source_lang, target_lang, progres
         # Split the text lines into chunks of 5000 chars each
         chunks = []
         current_chunk = ""
-        max_chunk_length = 5000 # This is fixed by google translate and by the library also
         with open(source_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
             for line in lines:
-                if len(current_chunk) + len(line) <= max_chunk_length:
+                if len(current_chunk) + len(line) < max_chunk_length:
                     current_chunk += line
                 else:
                     chunks.append(current_chunk)
@@ -76,6 +74,7 @@ def start_translation():
     save_path = save_entry.get()
     source_lang = source_lang_var.get()
     target_lang = target_lang_var.get()
+    max_chunk_length = max_chars_var.get()
     progress_bar = None
     
     try:
@@ -96,7 +95,7 @@ def start_translation():
         # Disable Start Translation button during translation
         start_button.config(state=tk.DISABLED)
 
-        translate_and_save(source_path, save_path, source_lang, target_lang, progress_var, num_workers)
+        translate_and_save(source_path, save_path, source_lang, target_lang, progress_var, max_chunk_length, num_workers)
 
     except Exception as ve:
         status_label.config(text=str(ve), fg="red")
@@ -141,16 +140,28 @@ save_browse_button.grid(row=1, column=2, padx=5, pady=5)
 source_lang_label = tk.Label(root, text="Source Language:")
 source_lang_label.grid(row=2, column=0, padx=5, pady=5, sticky="e")
 
+
+languages = GoogleTranslator().get_supported_languages()
+
 source_lang_var = tk.StringVar(value="auto")
-source_lang_dropdown = ttk.Combobox(root, textvariable=source_lang_var, values=["auto", "fr", "es", "de", "..."])
+source_lang_dropdown = ttk.Combobox(root, textvariable=source_lang_var, values=["auto"]+languages)
 source_lang_dropdown.grid(row=2, column=1, padx=5, pady=5)
 
 target_lang_label = tk.Label(root, text="Target Language:")
 target_lang_label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
 
-target_lang_var = tk.StringVar(value="en")
-target_lang_dropdown = ttk.Combobox(root, textvariable=target_lang_var, values=["en", "fr", "es", "de", "..."])
+target_lang_var = tk.StringVar(value="english")
+target_lang_dropdown = ttk.Combobox(root, textvariable=target_lang_var, values=languages)
 target_lang_dropdown.grid(row=3, column=1, padx=5, pady=5)
+
+
+max_chars_label = tk.Label(root, text="Max Characters:")
+max_chars_label.grid(row=4, column=0, padx=5, pady=5, sticky="e")
+
+max_chars_var = tk.IntVar(value=5000)
+max_chars_slider = tk.Scale(root, variable=max_chars_var, from_=1, to=5000, orient=tk.HORIZONTAL, length=180)
+max_chars_slider.grid(row=4, column=1, padx=5, pady=5)
+
 
 num_workers_label = tk.Label(root, text="Number of Workers:")
 num_workers_label.grid(row=5, column=0, padx=5, pady=5, sticky="e")
