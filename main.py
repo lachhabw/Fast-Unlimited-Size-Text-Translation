@@ -158,7 +158,7 @@ target_lang_dropdown.grid(row=3, column=1, padx=5, pady=5)
 max_chars_label = tk.Label(root, text="Max Characters:")
 max_chars_label.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
-max_chars_var = tk.IntVar(value=5000)
+max_chars_var = tk.IntVar(value=3000)
 max_chars_slider = tk.Scale(root, variable=max_chars_var, from_=1, to=5000, orient=tk.HORIZONTAL, length=180)
 max_chars_slider.grid(row=4, column=1, padx=5, pady=5)
 
