@@ -39,4 +39,5 @@ The workflow is straightforward:
 
 ## Notes
 
-The application features a progress bar that appears during the translation process, offering visual feedback to the user.
+- The application features a progress bar that appears during the translation process, offering visual feedback to the user.
+- Users can adjust the maximum characters limit per chunk, with a default value of 3000, to avoid potential errors related to the Deep Translator library. If encountering errors, lowering the limit is recommended, though a maximum of 5000 characters per chunk can be selected.
