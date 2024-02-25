@@ -13,7 +13,7 @@ This application efficiently translates large text files using Google Translate.
 The workflow is straightforward:
 
 1. User selects source file, defines source and target languages, and specifies save location through the GUI.
-2. Upon clicking "Start Translation," the tool begins processing.
+2. Upon clicking "Start Translation", the tool begins processing.
 
 ## Setup Instructions
 
